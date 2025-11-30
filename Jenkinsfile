@@ -8,11 +8,13 @@ pipeline {
       }
     }
 
-    stage('Run Python App') {
+    stage('Build') {
       steps {
         bat """
-        python app.py
-        echo Python_Build_OK > artifact.txt
+        if exist dist rmdir /s /q dist
+        mkdir dist
+        copy index.html dist\\index.html
+        echo HTML_Build_OK > dist\\artifact.txt
         """
       }
     }
@@ -20,7 +22,7 @@ pipeline {
 
   post {
     always {
-      archiveArtifacts artifacts: 'artifact.txt', allowEmptyArchive: false
+      archiveArtifacts artifacts: 'dist/**', allowEmptyArchive: false
     }
   }
 }
